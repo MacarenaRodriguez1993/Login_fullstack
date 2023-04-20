@@ -1,7 +1,16 @@
-const express = require("express");
+require("dotenv").config();
+const { PORT } = process.env;
 
-const server = express();
+const server = require("./src/app");
+const sequelize = require("./src/db");
 
-server.listen(3001, () => {
-  console.log("Escuchando en puerto 3001");
-});
+sequelize
+  .sync({ force: true })
+  .then(() => {
+    server.listen(PORT, () =>
+      console.log(`La aplicación está funcionando en el puerto ${PORT}`)
+    );
+  })
+  .catch((error) =>
+    console.log("Error al conectarse a la base de datos:", error)
+  );
