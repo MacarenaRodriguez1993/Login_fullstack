@@ -1,8 +1,10 @@
+require("dotenv").config();
 const Router = require("express");
 const router = Router();
 const User = require("../model/Login");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { TOKEN_SECRET } = process.env;
 router.get("/", async (req, res) => {
   try {
     const users = await User.findAll();
@@ -29,7 +31,7 @@ router.post("/login", async (req, res) => {
         firstname: user.firstname,
         lastname: user.lastname,
       };
-      const token = jwt.sign(infoForToken, "magicSecret");
+      const token = jwt.sign(infoForToken, TOKEN_SECRET);
       res.status(200).json(token);
     } else throw new Error("credenciales incorrectas");
   } catch (error) {
