@@ -13,20 +13,30 @@ import {
 import LockIcon from "@mui/icons-material/Lock";
 import "./login.css";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 const Login = () => {
+  const navigate = useNavigate();
+
+  //Definicion de estados locales
   const [user, setUser] = useState({
     email: "",
     password: "",
   });
+  //const [errors, setErrors] = useState({});
+
+  //Settear valores en la variable user
   const handleChange = (e) => {
     setUser({
       ...user,
       [e.target.name]: e.target.value,
     });
   };
+
+  //Envio de credenciales
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(user);
+    navigate("/");
   };
   return (
     <Paper elevation={10} className="fondo">
@@ -63,7 +73,6 @@ const Login = () => {
           fullWidth
           variant="contained"
           size="large"
-          onClick={handleSubmit}
         >
           Iniciar Sesion
         </Button>

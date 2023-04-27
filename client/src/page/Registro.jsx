@@ -5,6 +5,7 @@ import LockIcon from "@mui/icons-material/Lock";
 
 const Registro = () => {
   const navigate = useNavigate();
+
   //Definicion de estados locales
   const [user, setUser] = useState({
     firstname: "",
@@ -14,44 +15,56 @@ const Registro = () => {
     passwordConfirm: "",
     birthDate: "",
   });
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState({});
+
+  //Settear valores en la variable user
   const handleChange = (e) => {
     setUser({
       ...user,
       [e.target.name]: e.target.value,
     });
   };
-  const validate = () => {
-    let errors = {};
-    if (user.password !== user.passwordConfirm)
-      errors.password = "Las contraseñas no coinciden";
 
-    if (!emailRegex.test(user.email))
-      errors.email =
-        "El mail ingresado no tiene formato valido (ej... usuario@gmail.com)";
-
-    if (!passwordRegex.test(user.password))
-      errors.password = "La contraseña debe tener al menos 8 caracteres";
-
-    const today = new Date().toISOString().substring(0, 10);
-
-    if (user.birthDate > today)
-      errors.birthDate = "La fecha de nacimiento no es valida";
-
-    return errors;
-  };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const err = validate(user);
-    setError(err);
-    console.log(error);
-    if (err === null) {
-      console.log("TODO OKI");
-    }
-  };
   //constantes de expresiones regulares
   const emailRegex = /^[\w.%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const passwordRegex = /^[a-zA-Z0-9!@#$%^&*()_+\-=[\]{}|\\:',./?><]{8,}$/;
+  const nameRegex = /^[a-zA-Z]{3,}$/;
+
+  //Funcion para validar los datos
+  const validate = () => {
+    const validationError = {};
+    const today = new Date().toISOString().substring(0, 10);
+    if (user.password !== user.passwordConfirm) {
+      validationError.password = "Las contraseñas no coinciden.";
+    } else if (!passwordRegex.test(user.password)) {
+      validationError.password =
+        "La contraseña debe tener al menos 8 caracteres.";
+    } else if (!emailRegex.test(user.email)) {
+      validationError.email = "El mail ingresado no tiene formato valido.";
+    } else if (user.birthDate > today) {
+      validationError.birthDate = "La fecha de nacimiento no es valida.";
+    } else if (!nameRegex.test(user.firstname)) {
+      validationError.firstname =
+        "El nombre no es valido, debe tener al menos 3 caracteres. ";
+    } else if (!nameRegex.test(user.lastname)) {
+      validationError.lastname =
+        "El apellido no es valido, debe tener al menos 3 caracteres.";
+    }
+    return validationError;
+  };
+
+  //Envio de formulario y llamado a la funcion validate()
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const validarErrors = validate();
+
+    if (Object.keys(validarErrors).length > 0) {
+      setErrors(validarErrors);
+      return;
+    } else {
+      navigate("/");
+    }
+  };
 
   return (
     <Paper elevation={10} className="fondo">
@@ -61,7 +74,7 @@ const Registro = () => {
         </Avatar>
         <h3>Registrarme</h3>
       </Grid>
-      {error && error.message}
+
       <Box component={"form"} onSubmit={handleSubmit}>
         <TextField
           label="Nombre"
@@ -70,6 +83,8 @@ const Registro = () => {
           fullWidth
           required
           margin="normal"
+          error={errors.firstname !== undefined}
+          helperText={errors.firstname}
           onChange={handleChange}
         />
         <TextField
@@ -79,6 +94,8 @@ const Registro = () => {
           fullWidth
           required
           margin="normal"
+          error={errors.lastname !== undefined}
+          helperText={errors.lastname}
           onChange={handleChange}
         />
         <TextField
@@ -87,6 +104,8 @@ const Registro = () => {
           value={user.birthDate}
           fullWidth
           margin="normal"
+          error={errors.birthDate !== undefined}
+          helperText={errors.birthDate}
           onChange={handleChange}
         />
         <TextField
@@ -96,6 +115,8 @@ const Registro = () => {
           fullWidth
           required
           margin="normal"
+          error={errors.email !== undefined}
+          helperText={errors.email}
           onChange={handleChange}
         />
         <TextField
@@ -106,6 +127,8 @@ const Registro = () => {
           margin="normal"
           fullWidth
           required
+          error={errors.password !== undefined}
+          helperText={errors.password}
           onChange={handleChange}
         />
         <TextField
@@ -117,6 +140,8 @@ const Registro = () => {
           fullWidth
           required
           onChange={handleChange}
+          error={errors.password !== undefined}
+          helperText={errors.password}
         />
         <Button
           type="submit"
