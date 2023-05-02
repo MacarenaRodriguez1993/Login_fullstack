@@ -2,6 +2,7 @@ import { Avatar, Box, Button, Grid, Paper, TextField } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LockIcon from "@mui/icons-material/Lock";
+import axios from "axios";
 
 const Registro = () => {
   const navigate = useNavigate();
@@ -54,14 +55,17 @@ const Registro = () => {
   };
 
   //Envio de formulario y llamado a la funcion validate()
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     const validarErrors = validate();
 
     if (Object.keys(validarErrors).length > 0) {
       setErrors(validarErrors);
       return;
     } else {
+      const resp = await axios.post(`http://www.localhost:3001/register`, user);
+      console.log(resp);
       navigate("/");
     }
   };

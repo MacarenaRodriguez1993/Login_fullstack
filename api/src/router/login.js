@@ -5,7 +5,23 @@ const User = require("../model/Login");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { TOKEN_SECRET } = process.env;
-router.get("/", async (req, res) => {
+
+const verifyToken = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  console.log(authHeader);
+
+  if (token == null) return res.status(401).send("Token requerido");
+
+  jwt.verify(token, TOKEN_SECRET, (err, user) => {
+    if (err) return res.status(403).send("Token invalido");
+    console.log(user);
+    req.user = user;
+    next();
+  });
+};
+
+router.get("/", verifyToken, async (req, res) => {
   try {
     const users = await User.findAll();
     res.status(200).json(users);
@@ -32,7 +48,8 @@ router.post("/login", async (req, res) => {
         lastname: user.lastname,
       };
       const token = jwt.sign(infoForToken, TOKEN_SECRET);
-      res.status(200).json(token);
+      const dataEnvio = { ...infoForToken, token };
+      res.status(200).json(dataEnvio);
     } else throw new Error("credenciales incorrectas");
   } catch (error) {
     res.status(404).json({ err: error.message });
