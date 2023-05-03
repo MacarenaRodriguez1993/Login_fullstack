@@ -37,7 +37,7 @@ router.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({ where: { email } });
     if (user === null) {
-      throw new Error("El usuario no existe");
+      throw new Error(`El mail ${email} no esta registrado`);
     }
     const correctPassword = await bcrypt.compare(password, user.password);
     if (correctPassword) {
@@ -57,18 +57,34 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-  const { firstname, lastname, email, birthDate } = req.body;
+  const { firstname, lastname, email, birthDate, password } = req.body;
   const passwordHash = bcrypt.hashSync(req.body.password, 10);
   try {
-    await User.create({
-      firstname,
-      lastname,
-      email,
-      birthDate,
-      password: passwordHash,
-    }).then((u) => {
-      res.status(201).json(u);
-    });
+    const user = await User.findOne({ where: { email } });
+    if (user === null) {
+      await User.create({
+        firstname,
+        lastname,
+        email,
+        birthDate,
+        password: passwordHash,
+      }).then((u) => {
+        //      res.status(201).json(u);
+        const infoToken = {
+          id: u.id,
+          email,
+          firstname,
+          lastname,
+        };
+        const token = jwt.sign(infoToken, TOKEN_SECRET);
+        const dataEnvio = { ...infoToken, token };
+        res.status(200).json(dataEnvio);
+      });
+    } else {
+      throw new Error(
+        `El mail ${email} ya fue registrado, no puede duplicarse`
+      );
+    }
   } catch (error) {
     res.status(404).json({ err: error.message });
   }

@@ -3,11 +3,15 @@ import Navbar from "../components/Navbar";
 import axios from "axios";
 import { useEffect, useState } from "react";
 const Home = () => {
+  //Estados globales
   const [user, setUser] = useState();
   const [usuarios, setUsuarios] = useState();
+
   useEffect(() => {
     setUser(localStorage.getItem("user"));
   }, []);
+
+  //Funcion de prueba(acciona boton y permite ver usuarios registrados)
   const handleClick = async () => {
     const loggedUser = localStorage.getItem("user");
     if (loggedUser) {

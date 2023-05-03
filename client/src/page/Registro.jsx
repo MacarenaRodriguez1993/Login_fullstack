@@ -16,8 +16,8 @@ const Registro = () => {
     passwordConfirm: "",
     birthDate: "",
   });
-  const [errors, setErrors] = useState({});
-
+  const [errorsValidation, setErrorsValidation] = useState({});
+  const [errors, setErrors] = useState();
   //Settear valores en la variable user
   const handleChange = (e) => {
     setUser({
@@ -57,16 +57,21 @@ const Registro = () => {
   //Envio de formulario y llamado a la funcion validate()
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const validarErrors = validate();
-
     if (Object.keys(validarErrors).length > 0) {
-      setErrors(validarErrors);
+      setErrorsValidation(validarErrors);
       return;
     } else {
-      const resp = await axios.post(`http://www.localhost:3001/register`, user);
-      console.log(resp);
-      navigate("/");
+      await axios
+        .post(`http://www.localhost:3001/register`, user)
+        .then((resp) => {
+          console.log(resp.data);
+          localStorage.setItem("user", JSON.stringify(resp.data));
+          navigate("/");
+        })
+        .catch((error) => {
+          setErrors(error.response.data.err);
+        });
     }
   };
 
@@ -78,7 +83,7 @@ const Registro = () => {
         </Avatar>
         <h3>Registrarme</h3>
       </Grid>
-
+      {errors && <h2 style={{ color: "red" }}>{errors}</h2>}
       <Box component={"form"} onSubmit={handleSubmit}>
         <TextField
           label="Nombre"
@@ -87,8 +92,8 @@ const Registro = () => {
           fullWidth
           required
           margin="normal"
-          error={errors.firstname !== undefined}
-          helperText={errors.firstname}
+          error={errorsValidation.firstname !== undefined}
+          helperText={errorsValidation.firstname}
           onChange={handleChange}
         />
         <TextField
@@ -98,8 +103,8 @@ const Registro = () => {
           fullWidth
           required
           margin="normal"
-          error={errors.lastname !== undefined}
-          helperText={errors.lastname}
+          error={errorsValidation.lastname !== undefined}
+          helperText={errorsValidation.lastname}
           onChange={handleChange}
         />
         <TextField
@@ -108,8 +113,8 @@ const Registro = () => {
           value={user.birthDate}
           fullWidth
           margin="normal"
-          error={errors.birthDate !== undefined}
-          helperText={errors.birthDate}
+          error={errorsValidation.birthDate !== undefined}
+          helperText={errorsValidation.birthDate}
           onChange={handleChange}
         />
         <TextField
@@ -119,8 +124,8 @@ const Registro = () => {
           fullWidth
           required
           margin="normal"
-          error={errors.email !== undefined}
-          helperText={errors.email}
+          error={errorsValidation.email !== undefined}
+          helperText={errorsValidation.email}
           onChange={handleChange}
         />
         <TextField
@@ -131,8 +136,8 @@ const Registro = () => {
           margin="normal"
           fullWidth
           required
-          error={errors.password !== undefined}
-          helperText={errors.password}
+          error={errorsValidation.password !== undefined}
+          helperText={errorsValidation.password}
           onChange={handleChange}
         />
         <TextField
@@ -144,8 +149,8 @@ const Registro = () => {
           fullWidth
           required
           onChange={handleChange}
-          error={errors.password !== undefined}
-          helperText={errors.password}
+          error={errorsValidation.password !== undefined}
+          helperText={errorsValidation.password}
         />
         <Button
           type="submit"
