@@ -32,12 +32,20 @@ const Home = () => {
     <>
       <Navbar />
       <h1>Home</h1>
-      <Button disabled={!user} variant="contained" onClick={handleClick}>
-        Ver Usuarios Registrados
-      </Button>
-      {usuarios?.map((u) => {
-        return <h2 key={u.id}>{u.email}</h2>;
-      })}
+      <p>
+        En esta seccion encontraras todo lo relacionado a home todo lo general.
+      </p>
+      <ul style={{ width: "200px", margin: "auto" }}>
+        <li>Noticias</li>
+        <li>Novedades</li>
+        <li>inscripcion</li>
+      </ul>
+      <p>
+        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Suscipit neque
+        fuga, cupiditate ab fugiat inventore provident nihil quos laborum
+        eligendi unde molestias maiores doloribus dolorem, sint earum expedita
+        reprehenderit iste.
+      </p>
     </>
   );
 };

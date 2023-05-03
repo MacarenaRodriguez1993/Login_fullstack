@@ -41,7 +41,7 @@ const Login = () => {
         // Manejar la respuesta exitosa
         const resp = response.data;
         localStorage.setItem("user", JSON.stringify(resp));
-        navigate("/");
+        navigate("/perfil");
       })
       .catch((error) => {
         // Manejar el error

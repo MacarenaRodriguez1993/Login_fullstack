@@ -65,9 +65,8 @@ const Registro = () => {
       await axios
         .post(`http://www.localhost:3001/register`, user)
         .then((resp) => {
-          console.log(resp.data);
           localStorage.setItem("user", JSON.stringify(resp.data));
-          navigate("/");
+          navigate("/perfil");
         })
         .catch((error) => {
           setErrors(error.response.data.err);

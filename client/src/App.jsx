@@ -3,6 +3,7 @@ import "./App.css";
 import Registro from "./page/Registro";
 import Home from "./page/Home";
 import Login from "./page/Login";
+import Perfil from "./page/Perfil";
 
 const App = () => {
   return (
@@ -11,6 +12,7 @@ const App = () => {
         <Route exact path="/" element={<Home />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/perfil" element={<Perfil />} />
       </Routes>
     </>
   );
