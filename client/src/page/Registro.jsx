@@ -66,7 +66,7 @@ const Registro = () => {
         .post(`http://www.localhost:3001/register`, user)
         .then((resp) => {
           localStorage.setItem("user", JSON.stringify(resp.data));
-          navigate("/perfil");
+          navigate(`/perfil/${user.id}`);
         })
         .catch((error) => {
           setErrors(error.response.data.err);

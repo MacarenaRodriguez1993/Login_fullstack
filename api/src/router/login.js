@@ -5,21 +5,7 @@ const User = require("../model/Login");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { TOKEN_SECRET } = process.env;
-
-const verifyToken = (req, res, next) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-  console.log(authHeader);
-
-  if (token == null) return res.status(401).send("Token requerido");
-
-  jwt.verify(token, TOKEN_SECRET, (err, user) => {
-    if (err) return res.status(403).send("Token invalido");
-    console.log(user);
-    req.user = user;
-    next();
-  });
-};
+const { verifyToken } = require("../middleware/auth");
 
 router.get("/", verifyToken, async (req, res) => {
   try {
@@ -30,12 +16,20 @@ router.get("/", verifyToken, async (req, res) => {
   }
 });
 
-router.get("/:id", (req, res) => {});
+router.get("/perfil/:id", verifyToken, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const userById = await User.findByPk(id);
+    res.status(200).json(userById);
+  } catch (error) {
+    res.status(400).json({ err: error.message });
+  }
+});
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { email: email.toLowerCase() } });
     if (user === null) {
       throw new Error(`El mail ${email} no esta registrado`);
     }
@@ -57,19 +51,18 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-  const { firstname, lastname, email, birthDate, password } = req.body;
+  const { firstname, lastname, email, birthDate } = req.body;
   const passwordHash = bcrypt.hashSync(req.body.password, 10);
   try {
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { email: email.toLowerCase() } });
     if (user === null) {
       await User.create({
         firstname,
         lastname,
-        email,
+        email: email.toLowerCase(),
         birthDate,
         password: passwordHash,
       }).then((u) => {
-        //      res.status(201).json(u);
         const infoToken = {
           id: u.id,
           email,
@@ -89,7 +82,24 @@ router.post("/register", async (req, res) => {
     res.status(404).json({ err: error.message });
   }
 });
-router.put("/user", (req, res) => {});
+router.put("/perfil/:id", verifyToken, async (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+  try {
+    const user = await User.findByPk(id);
+    if (user) {
+      user.firstname = data.firstname;
+      user.lastname = data.lastname;
+      user.birthDate = data.birthDate;
+      await user.save();
+      res.status(200).send(user);
+    } else {
+      throw new Error("El usuario no fue encontrado");
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 router.delete("/user/:id", (req, res) => {});
 
 module.exports = router;
