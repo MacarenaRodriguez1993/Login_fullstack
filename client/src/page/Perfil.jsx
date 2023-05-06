@@ -59,7 +59,7 @@ const Perfil = () => {
   return (
     <>
       <Navbar />
-      {user && (
+      {perfil && (
         <>
           <Box
             padding="1em"
@@ -75,9 +75,9 @@ const Perfil = () => {
                 <BorderColorIcon />
               </Button>
             </div>
-            <div>
-              <h2>Hola {user.firstname}</h2>
-              <h3>Gracias por iniciar sesion con " {user.email} "</h3>
+            <Box>
+              <h2>Hola {perfil.firstname}</h2>
+              <h3>Gracias por iniciar sesion con " {perfil.email} "</h3>
               <p>
                 En esta seccion encontraras todo tus datos e informacion
                 personal.
