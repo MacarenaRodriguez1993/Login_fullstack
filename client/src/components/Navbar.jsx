@@ -8,7 +8,7 @@ const Navbar = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
-    setUser(localStorage.getItem("user"));
+    setUser(JSON.parse(localStorage.getItem("user")));
   }, []);
 
   const logout = () => {
@@ -37,7 +37,7 @@ const Navbar = () => {
         <Box component="div">
           {user ? (
             <>
-              <Link href="/perfil" sx={{ margin: "1em" }}>
+              <Link href={`/perfil/${user.id}`} sx={{ margin: "1em" }}>
                 <Button color="secondary" variant="contained">
                   Perfil
                 </Button>

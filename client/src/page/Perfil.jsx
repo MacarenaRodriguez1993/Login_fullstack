@@ -6,7 +6,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   FormLabel,
   Input,
@@ -22,7 +21,7 @@ const Perfil = () => {
   //Declaracion de estados locales
   const [user, setUser] = useState();
   const [perfil, setPerfil] = useState();
-  const [form, setForm] = useState();
+
   //estado para abrir y cerrar modal
   const [open, setOpen] = useState(false);
 
@@ -84,45 +83,41 @@ const Perfil = () => {
                 personal.
               </p>
               <p>Podes actualizar y agregar nueva informacion.</p>
-            </div>
+            </Box>
           </Box>
 
           <Box
             sx={{
               width: "100%",
-              backgroundColor: "#aae",
+              backgroundColor: "#1f90ff",
               textAlign: "start",
               padding: "1em",
+              color: "#fff",
+              marginTop: "3em",
+              marginBottom: "3em",
             }}
           >
             <Typography>Tus datos</Typography>
           </Box>
           {perfil && (
-            <div style={{ textAlign: "start" }}>
+            <div style={{ textAlign: "start", marginLeft: "0.5em" }}>
               <Typography>Nombre: {perfil.firstname}</Typography>
               <Typography>Apellido : {perfil.lastname}</Typography>
               <Typography>
                 Fecha de Nacimiento :{" "}
-                {new Date(perfil.birthDate).toLocaleDateString("es-ES")}
+                {new Date(perfil.birthDate).toUTCString().slice(4, 16)}
               </Typography>
-              <Typography>Domicilio</Typography>
               <Typography>Rol : {perfil.rol}</Typography>
-              <Box style={{ display: "none" }}>
-                <FormLabel>Nombre </FormLabel>
-                <Input
-                  value={perfil.firstname}
-                  name="firstname"
-                  onChange={handleChange}
-                  type="text"
-                />
-              </Box>
               <Button
                 variant="contained"
                 color="success"
                 onClick={handleClickOpen}
+                sx={{ marginTop: "0.5em" }}
               >
                 Editar info
               </Button>
+
+              {/* Modal de dialogo para editar informacion personal */}
               <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Editar Información Personal</DialogTitle>
                 <DialogContent>
@@ -158,34 +153,24 @@ const Perfil = () => {
                   />
                 </DialogContent>
                 <DialogActions>
-                  <Button onClick={handleClose}>Cancel</Button>
-                  <Button onClick={handleSubmit}>Subscribe</Button>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={handleClose}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSubmit}
+                  >
+                    Editar
+                  </Button>
                 </DialogActions>
               </Dialog>
             </div>
           )}
-
-          {/* <Box component="form" sx={{ margin: "1em", textAlign: "initial" }}> */}
-          {/* <Box> */}
-          {/* <FormLabel>Nombre </FormLabel> */}
-          {/* <Input 
-          //  value={perfil.firstname}
-          //  name="firstname" // onChange={handleChange}
-          //  type="text" // />
-      {/*     </Box> */}
-          {/* <Box> */}
-          {/* <FormLabel>Apellido </FormLabel> */}
-          {/* <Input placeholder="Placeholder" /> */}
-          {/* </Box> */}
-          {/* <Box> */}
-          {/* <FormLabel>Fecha de Nacimiento </FormLabel> */}
-          {/* <Input placeholder="Placeholder" type="date" /> */}
-          {/* </Box> */}
-          {/* <Box> */}
-          {/* <FormLabel>Domicilio </FormLabel> */}
-          {/* <Input placeholder="Placeholder" /> */}
-          {/* </Box> */}
-          {/* </Box> */}
         </>
       )}
     </>
