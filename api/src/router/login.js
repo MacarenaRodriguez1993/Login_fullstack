@@ -100,6 +100,18 @@ router.put("/perfil/:id", verifyToken, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-router.delete("/user/:id", (req, res) => {});
+router.delete("/user/:id", verifyToken, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await User.destroy({ where: { id } });
+    if (user) {
+      res.status(200).json("Usuario eliminado con exito");
+    } else {
+      throw new Error("Usuario con id no encontrado");
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 module.exports = router;

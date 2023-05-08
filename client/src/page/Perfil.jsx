@@ -7,17 +7,16 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormLabel,
-  Input,
   TextField,
   Typography,
 } from "@mui/material";
 import intance from "../service/interceptor";
 import imagePerfil from "../asset/perfil.png";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 const Perfil = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   //Declaracion de estados locales
   const [user, setUser] = useState();
   const [perfil, setPerfil] = useState();
@@ -56,6 +55,22 @@ const Perfil = () => {
       setOpen(false);
     }, 1000);
   };
+  const deleteUser = async (id) => {
+    if (confirm("Estas seguro de dar de baja tu cuenta?")) {
+      await intance
+        .delete(`user/${id}`)
+        .then((resp) => {
+          console.log(resp.data);
+          localStorage.removeItem("user");
+          setUser(null);
+          navigate("/");
+        })
+
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
   return (
     <>
       <Navbar />
@@ -83,6 +98,13 @@ const Perfil = () => {
                 personal.
               </p>
               <p>Podes actualizar y agregar nueva informacion.</p>
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={() => deleteUser(perfil.id)}
+              >
+                Dar de baja mi cuenta
+              </Button>
             </Box>
           </Box>
 
